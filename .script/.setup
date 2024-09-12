@@ -1,0 +1,86 @@
+#!/bin/bash
+set -e  # Exit immediately if a command exits with a non-zero status
+# Installing PrivateGPT on WSL with GPU support
+# Prerequisites
+## Updating Ubuntu
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install build-essential -y
+
+# Setting Up Python Environment
+sudo apt-get install -y curl wget git gcc make openssl libssl-dev libbz2-dev libreadline-dev libsqlite3-dev zlib1g-dev libncursesw5-dev libgdbm-dev libc6-dev zlib1g-dev libsqlite3-dev tk-dev libssl-dev openssl libffi-dev
+curl https://pyenv.run | bash
+export PATH="/home/$(whoami)/.pyenv/bin:$PATH"
+
+## Add the following lines to your .bashrc file:
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+## Reload your terminal
+source ~/.bashrc
+
+## Install important missing pyenv stuff
+sudo apt-get install lzma
+sudo apt-get install liblzma-dev
+
+## Install Python 3.11 and set it as the global version:
+pyenv install 3.11
+pyenv global 3.11
+pip install pip --upgrade
+pyenv local 3.11
+pip install poetry
+
+# Poetry Installation
+#curl -sSL https://install.python-poetry.org | python3 -
+
+## Add the following line to your .bashrc:
+export PATH="/home/$HOME/.local/bin:$PATH"
+
+## Reload your configuration
+source ~/.bashrc
+poetry --version # should display something without errors
+
+# Nvidia Drivers Installation
+## Download Installer for Linux Ubuntu 22.04 x86_64
+### CUDA Toolkit Installer
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.1-1_all.deb
+sudo dpkg -i cuda-keyring_1.1-1_all.deb
+sudo apt-get update
+sudo apt-get -y install cuda-toolkit-12-6
+
+### Driver Installer
+sudo apt-get install -y nvidia-open
+
+## Add the following lines to your .bashrc:
+export PATH="/usr/local/cuda-12.4/bin:$PATH"
+export LD_LIBRARY_PATH="/usr/local/cuda-12.4/lib64:$LD_LIBRARY_PATH"
+
+## Reload your configuration and check that all is working as expected
+source ~/.bashrc
+nvcc --version
+
+# ----------------------------------------------------------------------
+# Cloning the PrivateGPT repo
+git clone https://github.com/imartinez/privateGPT
+
+# Installing PrivateGPT Dependencies
+cd privateGPT
+poetry install --extras "ui embeddings-huggingface llms-llama-cpp vector-stores-qdrant"
+
+## Building and Running PrivateGPT
+sudo apt install -y gcc-11 g++-11
+
+## Finally, install LLAMA CUDA libraries and Python bindings:
+set "CMAKE_ARGS=-DLLAMA_OPENBLAS=on"
+set "FORCE_CMAKE=1"
+poetry run pip install --force-reinstall --no-cache-dir llama-cpp-python
+
+## Let private GPT download a local LLM for you (mixtral by default):
+poetry run python scripts/setup
+
+## To run PrivateGPT:
+make run
+
+## access the machine via browser
+# http://localhost:8001/
