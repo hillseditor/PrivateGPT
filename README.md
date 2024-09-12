@@ -37,4 +37,6 @@ wsl --update
 
 ## Chnage Directory to you build directory in your WSL
 ## and Clone this repository then run 
+```cmd
 ./.script/.setup
+```
