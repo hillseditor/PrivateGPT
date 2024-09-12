@@ -1,5 +1,3 @@
-#!/bin/bash
-set -e  # Exit immediately if a command exits with a non-zero status
 # Installing PrivateGPT on WSL with GPU support
 # Prerequisites
 ## Updating Ubuntu
@@ -60,6 +58,8 @@ export LD_LIBRARY_PATH="/usr/local/cuda-12.4/lib64:$LD_LIBRARY_PATH"
 source ~/.bashrc
 nvcc --version
 
+## change to build directory
+cd src
 # ----------------------------------------------------------------------
 # Cloning the PrivateGPT repo
 git clone https://github.com/imartinez/privateGPT
