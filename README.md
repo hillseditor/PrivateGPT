@@ -23,11 +23,13 @@ wsl --export <DRISTRO> C:\wsl\backup\ubuntu\%WSLdistro%
 ```
 
 ## restore WSL from backup
+```cmd
 wsl --shutdown
 wsl --uninstall UbuntuHES
 wsl --unregister UbuntuHES
 wsl --import UbuntuHES C:\wsl\install "C:\wsl\backup\ubuntu\%WSLdistro%"
 wsl --update
+```
 
 ## Replacement requests
 <DRISTRO> = your distro name
