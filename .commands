@@ -1,0 +1,21 @@
+# ✅ 1. Build the full development container (includes dependencies and virtualenv)
+```bash
+make build-model
+```
+
+# 🔐 2. Start an interactive shell inside the container (so you can authenticate and download gated models)
+```bash
+make shell
+```
+
+# 🧠 3. Run the setup script with your Hugging Face token
+```bash
+poetry run bash .script/startup.sh
+```
+⏳ This will securely download the Mixtral model and embeddings only if HF_TOKEN is provided.
+
+# 📦 4. (Optional) After validation, create your slim production image
+```bash
+make build-runtime
+make run
+```

@@ -1,42 +1,74 @@
+# 🔐 PrivateGPT on WSL2 with CUDA & Poetry
 
-# PrivateGPT on WSL with GPU support
+A secure, GPU-accelerated AI runtime for PrivateGPT—containerized with modular Dockerfiles, CUDA bindings, and reproducible Python environments.
 
-PrivateGPT is a production-ready AI project that allows you to ask questions about your documents using the power of Large Language Models (LLMs), even in scenarios without an Internet connection. 100% private, no data leaves your execution environment at any point.
+## 🧰 Features
+- CUDA 12.4 support via WSL2/Docker Desktop
+- Python 3.11 via Pyenv + Poetry for dependency pinning
+- LLaMA-cpp with GPU acceleration
+- Qdrant, HuggingFace embeddings, and optional UI support
+- CI-ready build system via GitHub Actions
+- .devcontainer support for VSCode workflows
 
+## 🚀 Quickstart
+```bash
+# Build the full image
+make build
 
-## Acknowledgements
-
- - [Build from this tutorial - Emilien Lancelot](https://dev.to/docteurrs/installing-privategpt-on-wsl-with-gpu-support-1m2a)
-
-
-
-## Backup WSL first
-
-Backup your WSL, for rollback purposes 
-
-```cmd
-  # export WSL
-wsl --shutdown
-set WSLdistro=<DRISTRO>_%time:~0,2%%time:~3,2%%time:~6,2%_%date:~-10,2%%date:~-7,2%%date:~-4,4%.tar
-echo %WSLdistro%
-wsl --export <DRISTRO> C:\wsl\backup\ubuntu\%WSLdistro%
+# Run PrivateGPT with exposed UI
+make run
 ```
 
-## restore WSL from backup
-```cmd
-wsl --shutdown
-wsl --uninstall UbuntuHES
-wsl --unregister UbuntuHES
-wsl --import UbuntuHES C:\wsl\install "C:\wsl\backup\ubuntu\%WSLdistro%"
-wsl --update
-```
+Visit: http://localhost:8001
 
-## Replacement requests
-<DRISTRO> = your distro name
-<'C:\wsl\backup\ubuntu\'> = The location of your choice
+## 🛠️ Dev Container
+VSCode users can launch using .devcontainer/devcontainer.json for full GPU support.
 
-## Chnage Directory to you build directory in your WSL
-## and Clone this repository then run 
-```cmd
-./.script/.setup
+## 📦 Modular Dockerfiles
+Dockerfile.base: Environment + Poetry setup
+
+Dockerfile.model: PrivateGPT install, CUDA bindings
+
+## 👷 CI/CD
+GitHub Actions build workflow included. GitLab runners and container registry support ready for extension.
+
+## 🧠 Author
+Maintained by Olawale Adekoya
+
+## ✍️ `CONTRIBUTING.md` – Scaffold for Collaboration
+
+# 🤝 Contributing to PrivateGPT WSL2 Container
+
+Thanks for considering contributing! Here's how to get started:
+
+## 🧪 Setup
+Use Docker Desktop + WSL2 backend with GPU pass-through enabled.
+
+## 🧭 Branching
+- `main`: Stable build
+- `develop`: New integrations or feature testing
+- Feature branches: `feature/<topic>`
+
+## ✅ PR Guidelines
+- Keep builds reproducible
+- Include test logs or screenshots for model inference
+- Tag @oadekoya12 for review
+
+## 🚩 Open Tasks
+- Add logging hooks to observability stack
+- Extend model support to Mistral and Code LLMs
+- Include GitLab CI variant
+
+## 🛠️ Troubleshooting
+💥 Makefile: *** missing separator. Stop.
+This error is caused by commands under your targets (e.g. build:, run:) being indented with spaces instead of tabs. To auto-correct them:
+
+```bash
+	sed -i '/^[ ]\{4,\}/s/^[ ]\{4,\}/\t/' Makefile
 ```
+✅ This replaces lines starting with 4+ spaces with a single tab. 📦 If you prefer a safer fix that preserves your original file:
+
+```bash
+	cp Makefile Makefile.bak && sed -i '/^[ ]\{4,\}/s/^[ ]\{4,\}/\t/' Makefile
+```
+Now you're build-ready again!

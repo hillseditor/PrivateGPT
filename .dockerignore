@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+/scripts/__pycache__/
+/node_modules/
+/privateGPT/.venv/
+*.log
+.env

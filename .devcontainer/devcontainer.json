@@ -1,0 +1,16 @@
+{
+  "name": "PrivateGPT Dev Container",
+  "image": "privategpt-wsl",
+  "runArgs": ["--gpus", "all", "-p", "8001:8001"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "github.vscode-pull-request-github"
+      ]
+    }
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+  "workspaceFolder": "/app/privateGPT"
+}

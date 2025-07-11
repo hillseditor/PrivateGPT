@@ -1,0 +1,44 @@
+# 🚀 Base image with CUDA for GPU acceleration
+FROM nvidia/cuda:12.4.0-base-ubuntu22.04
+
+LABEL maintainer="Olawale Adekoya <olawaley2k@gmail.com>"
+
+ENV DEBIAN_FRONTEND=noninteractive \
+    PYTHON_VERSION="3.11" \
+    POETRY_VERSION="1.8.2" \
+    CMAKE_ARGS="-DLLAMA_OPENBLAS=on" \
+    FORCE_CMAKE=1 \
+    PATH="/root/.local/bin:$PATH"
+
+# 🧱 System dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential gcc g++ make curl wget git openssl python3 python3-pip \
+    libssl-dev libbz2-dev libreadline-dev libsqlite3-dev zlib1g-dev \
+    libncursesw5-dev libgdbm-dev tk-dev lzma liblzma-dev libffi-dev \
+    gcc-11 g++-11 && \
+    update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100 && \
+    update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100
+
+# 🧪 Poetry installation
+RUN pip3 install --no-cache-dir poetry==${POETRY_VERSION}
+
+# 📂 Clone PrivateGPT and prepare working directory
+WORKDIR /app
+RUN git clone https://github.com/imartinez/privateGPT.git
+WORKDIR /app/privateGPT
+
+# 📦 Install dependencies with extras
+RUN poetry config virtualenvs.in-project true && \
+    poetry install --extras "ui embeddings-huggingface llms-llama-cpp vector-stores-qdrant"
+
+# 🧠 Install LLAMA bindings with CUDA support
+RUN poetry run pip install --force-reinstall --no-cache-dir llama-cpp-python
+
+# 📥 Download local LLM model (e.g., Mixtral)
+RUN poetry run python scripts/setup
+
+# 🌐 Expose PrivateGPT UI
+EXPOSE 8001
+
+# 🏁 Start PrivateGPT Server
+CMD ["poetry", "run", "make", "run"]
